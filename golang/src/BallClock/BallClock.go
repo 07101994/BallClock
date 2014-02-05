@@ -7,7 +7,6 @@ import (
 
 func main() {
 	for i := 27; i <= 127; i++ {
-		//lcm := getLCM(i) / 2
 		c := NewClock(i)
 		days := c.getLCM() / 2
 		fmt.Println(i, "balls cycle after ", days, " days")
