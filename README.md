@@ -25,8 +25,8 @@ For each clock described in the input, your program should report the number of 
 
 Sample Input
 
-30<br/>  
-45<br/>  
+30  
+45  
 0
 
 Output for the Sample Input
