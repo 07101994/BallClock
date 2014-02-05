@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BallClockDotNet
 {
@@ -17,12 +15,12 @@ namespace BallClockDotNet
 		private int cycles = 0;
 		private int size = 0;
 
-		private Action<int[], Clock> onCycle;
+		private int[] index;
+		private int remaining;
 
-		public Clock(int size, Action<int[], Clock> onCycle)
+		public Clock(int size)
 		{
 			this.size = size;
-			this.onCycle = onCycle;
 
 			hours.Push(-1);
 
@@ -30,7 +28,30 @@ namespace BallClockDotNet
 				queue.Enqueue(i);
 		}
 
-		public void Increment()
+		public int GetLCM()
+		{
+			var result = 1;
+
+			// run until we know how often each ball returns to its origin
+			index = new int[size];
+			remaining = size;
+			while (remaining > 0)
+				Increment();
+			
+			// get the distinct lowest-common denominators
+			var set = index.Distinct().ToArray();
+
+			// calculate the lowest-common multiple for the set
+			foreach (var val in set)
+				result = LCM(result, val);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Increments the ball clock by one minute
+		/// </summary>
+		private void Increment()
 		{
 			ones.Push(queue.Dequeue());
 
@@ -52,50 +73,56 @@ namespace BallClockDotNet
 			}
 			else
 			{
+				// we've completed one more 12-hour cycle
+				cycles++;
+
 				while (hours.Count > 1)
 					queue.Enqueue(hours.Pop());
 			
 				// 13th ball goes on last
 				queue.Enqueue(hour);
 
-				RaiseOnCycle();
+				LogRepeats();
 			}
 		}
 
-		private void RaiseOnCycle()
+		/// <summary>
+		/// Looks for balls that returned to their origin 
+		/// and logs how many cycles it took
+		/// </summary>
+		private void LogRepeats()
 		{
-			cycles++;
+			int val = 0;
 
-			if (onCycle != null)
+			// iterate through the queue and check the index of each ball
+			for (int i = 0; i < size; i++)
 			{
-				int[] order = new int[size];
-				for (int i = 0; i < size; i++)
+				val = queue.Dequeue();
+
+				if (val == i + 1 && index[i] == 0)
 				{
-					order[i] = queue.Dequeue();
-					queue.Enqueue(order[i]);
+					// log when the ball returned to its origin
+					remaining--;
+					index[i] = cycles;
 				}
 
-				onCycle.Invoke(order, this);
+				queue.Enqueue(val);
 			}
 		}
 
-		public TimeSpan Time
+		/// <summary>
+		/// Calculates the least-common multiple of two values
+		/// </summary>
+		private static int LCM(int a, int b)
 		{
-			get
-			{
-				int minutes = (fives.Count * 5) + ones.Count;
-				return new TimeSpan(hours.Count, minutes, 0);
-			}
-		}
+			int max = Math.Max(a, b);
+			int min = Math.Min(a, b);
 
-		public int Days
-		{
-			get
-			{
-				return cycles / 2;
-			}
-		}
+			for (int i = 1; i <= min; i++)
+				if ((max * i) % min == 0)
+					return i * max;
 
-		public int Cycles { get { return cycles; } }
+			return min;
+		}
 	}
 }
