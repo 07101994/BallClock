@@ -1,10 +1,10 @@
 CLOCK
 
-Tempus et mobilius  <br/>
+Tempus et mobilius  
 Time and motion
 
-Tempus est mensura motus rerum mobilium.  <br/>
-Time is the measure of movement.  <br/>
+Tempus est mensura motus rerum mobilium.  
+Time is the measure of movement.  
 -- Auctoritates Aristotelis
 
 ...and movement has long been used to measure time. For example, the ball clock is a simple device which keeps track of the passing minutes by moving ball-bearings. Each minute, a rotating arm removes a ball bearing from the queue at the bottom, raises it to the top of the clock and deposits it on a track leading to indicators displaying minutes, five-minutes and hours. These indicators display the time between 1:00 and 12:59, but without 'a.m.' or 'p.m.' indicators. Thus 2 balls in the minute indicator, 6 balls in the five-minute indicator and 5 balls in the hour indicator displays the time 5:32.
@@ -31,5 +31,5 @@ Sample Input
 
 Output for the Sample Input
 
-30 balls cycle after 15 days.  <br/>
+30 balls cycle after 15 days.  
 45 balls cycle after 378 days.
