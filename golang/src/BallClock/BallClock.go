@@ -16,7 +16,7 @@ func main() {
 		if i >= 27 && i <= 127 {
 			c := NewClock(i)
 			if cycles, e := c.getLCM(); e == nil {
-				fmt.Println(i, "balls cycle after ", cycles / 2, " days")
+				fmt.Println(i, "balls cycle after", cycles / 2, "days")
 			} else {
 				fmt.Println("ERROR: %v", e)
 			}
