@@ -27,7 +27,7 @@ func New(size int) *Clock {
 	return &clock
 }
 
-func (c *Clock) LCM() (int, error) {
+func (c *Clock) CalculateCycles() (int, error) {
 	// track how many balls haven't repeated yet
 	remaining := len(c.index)
 	
@@ -40,6 +40,7 @@ func (c *Clock) LCM() (int, error) {
 		}
 	}
 	
+	// get distinct frequency values
 	set := map[int]int { }
 	for i := 0; i < len(c.index); i++ {
 		v := c.index[i]
@@ -48,11 +49,13 @@ func (c *Clock) LCM() (int, error) {
 		}	
 	}
 	
+	// get the least common multiple for all values
 	result := 1
 	for k, _ := range set {
 		result = lcm(result, k)
 	}
 	
+	// LCM is the # of cycles 
 	return result, nil
 }
 
