@@ -27,6 +27,7 @@ func New(size int) *Clock {
 	return &clock
 }
 
+// calculate the number of cycles required for the queue to return to its original order
 func (c *Clock) CalculateCycles() (int, error) {
 	// track how many balls haven't repeated yet
 	remaining := len(c.index)
@@ -59,6 +60,7 @@ func (c *Clock) CalculateCycles() (int, error) {
 	return result, nil
 }
 
+// increment the clock by one and trigger any cascades to the next ball track
 func (c *Clock) increment() (int, error) {
 	repeats := 0
 	
@@ -125,6 +127,7 @@ func (c *Clock) increment() (int, error) {
 	return repeats, nil
 }
 
+// log which balls have returned to their origin and the number of cycles it took
 func (c *Clock) logRepeats() int {
 	found := 0
 	item := 0
@@ -148,6 +151,7 @@ func (c *Clock) logRepeats() int {
 	return found
 }
 
+// calculate the least-common multiple
 func lcm(a int, b int) int {
 	max := 0
 	min := 0
