@@ -11,29 +11,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Modified from "Programming in Go" (Mark Summerfield; Addison Wesley, May 2012)
+// by Mark J. Miller.
+
 package stack
 
 import "errors"
 
-type Stack []interface{}
+type Stack []int
 
-func (stack *Stack) Pop() (interface{}, error) {
+func (stack *Stack) Pop() (int, error) {
     theStack := *stack
     if len(theStack) == 0 {
-        return nil, errors.New("can't Pop() an empty stack")
+        return 0, errors.New("can't Pop() an empty stack")
     }
     x := theStack[len(theStack)-1]
     *stack = theStack[:len(theStack)-1]
     return x, nil
 }
 
-func (stack *Stack) Push(x interface{}) {
+func (stack *Stack) Push(x int) {
     *stack = append(*stack, x)
 }
 
-func (stack Stack) Top() (interface{}, error) {
+func (stack Stack) Top() (int, error) {
     if len(stack) == 0 {
-        return nil, errors.New("can't Top() an empty stack")
+        return 0, errors.New("can't Top() an empty stack")
     }
     return stack[len(stack)-1], nil
 }

@@ -5,6 +5,8 @@ import (
 )
 
 type Clock struct {
+// do lower-case members == non-exported == private?
+
 	ones stack.Stack
 	fives stack.Stack
 	hours stack.Stack
@@ -27,13 +29,17 @@ func NewClock(size int) *Clock {
 	return &clock
 }
 
-func (c *Clock) getLCM() int {
+func (c *Clock) getLCM() int, error {
 	// track how many balls haven't repeated yet
 	remaining := len(c.index)
 	
 	// increment clock until we've logged the repeat frequency of each ball
 	for remaining > 0 {
-		remaining -= c.increment()
+		if repeats, e := c.increment(); e == nil {
+			remaining -= repeats
+		} else {
+			return 0, e
+		}
 	}
 	
 	set := map[int]int { }
@@ -49,36 +55,47 @@ func (c *Clock) getLCM() int {
 		result = LCM(result, k)
 	}
 	
-	return result
+	return result, nil
 }
 
-func (c *Clock) increment() int {
+func (c *Clock) increment() (int, error) {
 	repeats := 0
 	
 	// increment by one minute
 	c.ones.Push(<- c.queue)
-	if c.ones.Len() < 5 { return repeats }
+	if c.ones.Len() < 5 { return repeats, nil }
 	
 	// top minute becomes a five-minute ball
-	minute, _ := c.ones.Pop()
-	c.fives.Push(minute)
+	if minute, e := c.ones.Pop(); e == nil {
+		c.fives.Push(minute)
+	} else {
+		return repeats, nil
+	}	
 	
 	// re-queue the remaining 4 balls
 	for c.ones.Len() > 0 {
-		item, _ := c.ones.Pop()
-		c.queue <- item.(int)
+		if item, e := c.ones.Pop(); e == nil {
+			c.queue <- item
+		} else { 
+			return repeats, e
+		}
 	}
 	
 	// 12 five-minute balls == hour
-	if c.fives.Len() < 12 { return repeats }
+	if c.fives.Len() < 12 { return repeats, nil }
 	
 	// top five-minute ball becomes an hour
-	hour, _ := c.fives.Pop()
+	if hour, e := c.fives.Pop(); e != nil {
+		return repeats, nil
+	} 
 	
 	// re-queue the remaining 11 balls
 	for c.fives.Len() > 0 {
-		item, _ := c.fives.Pop()
-		c.queue <- item.(int)
+		if item, e := c.fives.Pop(); e == nil {
+			c.queue <- item
+		} else {
+			return repeats, e
+		}
 	}
 	
 	if c.hours.Len() < 12 {
@@ -88,12 +105,15 @@ func (c *Clock) increment() int {
 		c.cycles++
 		
 		for c.hours.Len() > 1 {
-			item, _ := c.hours.Pop()
-			c.queue <- item.(int)
+			if item, e := c.hours.Pop(); e == nil {
+				c.queue <- item
+			} else {
+				return repeats, e
+			}
 		}
 		
 		// the 13th hour gets re-queued last
-		c.queue <- hour.(int)
+		c.queue <- hour
 		
 		// update the number of balls that repeated
 		repeats = c.logRepeats()
