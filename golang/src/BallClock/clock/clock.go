@@ -1,12 +1,10 @@
-package main
+package clock
 
 import (
 	"BallClock/stack"
 )
 
 type Clock struct {
-// do lower-case members == non-exported == private?
-
 	ones stack.Stack
 	fives stack.Stack
 	hours stack.Stack
@@ -15,7 +13,7 @@ type Clock struct {
 	index [] int
 }
 
-func NewClock(size int) *Clock {
+func New(size int) *Clock {
 	var clock Clock
 	clock.index = make([]int, size)
 	clock.queue = make(chan int, size)
@@ -29,7 +27,7 @@ func NewClock(size int) *Clock {
 	return &clock
 }
 
-func (c *Clock) getLCM() (int, error) {
+func (c *Clock) LCM() (int, error) {
 	// track how many balls haven't repeated yet
 	remaining := len(c.index)
 	
@@ -52,7 +50,7 @@ func (c *Clock) getLCM() (int, error) {
 	
 	result := 1
 	for k, _ := range set {
-		result = LCM(result, k)
+		result = lcm(result, k)
 	}
 	
 	return result, nil
@@ -147,7 +145,7 @@ func (c *Clock) logRepeats() int {
 	return found
 }
 
-func LCM(a int, b int) int {
+func lcm(a int, b int) int {
 	max := 0
 	min := 0
 	

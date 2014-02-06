@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"BallClock/clock"
 )
 
 func main() {
@@ -14,8 +15,8 @@ func main() {
 		if i == 0 { break }
 		
 		if i >= 27 && i <= 127 {
-			c := NewClock(i)
-			if cycles, e := c.getLCM(); e == nil {
+			c := clock.New(i)
+			if cycles, e := c.LCM(); e == nil {
 				fmt.Println(i, "balls cycle after", cycles / 2, "days")
 			} else {
 				fmt.Println("ERROR: %v", e)
