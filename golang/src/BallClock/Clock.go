@@ -29,7 +29,7 @@ func NewClock(size int) *Clock {
 	return &clock
 }
 
-func (c *Clock) getLCM() int, error {
+func (c *Clock) getLCM() (int, error) {
 	// track how many balls haven't repeated yet
 	remaining := len(c.index)
 	
@@ -85,7 +85,8 @@ func (c *Clock) increment() (int, error) {
 	if c.fives.Len() < 12 { return repeats, nil }
 	
 	// top five-minute ball becomes an hour
-	if hour, e := c.fives.Pop(); e != nil {
+	hour, e := c.fives.Pop()
+	if e != nil {
 		return repeats, nil
 	} 
 	
@@ -120,7 +121,7 @@ func (c *Clock) increment() (int, error) {
 	}
 	
 	// return balls that repated in this cycle
-	return repeats
+	return repeats, nil
 }
 
 func (c *Clock) logRepeats() int {
