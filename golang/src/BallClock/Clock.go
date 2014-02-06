@@ -10,12 +10,12 @@ type Clock struct {
 	hours stack.Stack
 	cycles int
 	queue chan int
-	gcdIndex [] int
+	index [] int
 }
 
 func NewClock(size int) *Clock {
 	var clock Clock
-	clock.gcdIndex = make([]int, size)
+	clock.index = make([]int, size)
 	clock.queue = make(chan int, size)
 	
 	clock.hours.Push(-1)
@@ -29,23 +29,23 @@ func NewClock(size int) *Clock {
 
 func (c *Clock) getLCM() int {
 	// track how many balls haven't repeated yet
-	remaining := len(c.gcdIndex)
+	remaining := len(c.index)
 	
 	// increment clock until we've logged the repeat frequency of each ball
 	for remaining > 0 {
 		remaining -= c.increment()
 	}
 	
-	lcdSet := map[int]int { }
-	for i := 0; i < len(c.gcdIndex); i++ {
-		v := c.gcdIndex[i]
+	set := map[int]int { }
+	for i := 0; i < len(c.index); i++ {
+		v := c.index[i]
 		if v != 1 {
-			lcdSet[v] = 1
+			set[v] = 1
 		}	
 	}
 	
 	result := 1
-	for k, _ := range lcdSet {
+	for k, _ := range set {
 		result = LCM(result, k)
 	}
 	
@@ -108,14 +108,14 @@ func (c *Clock) logRepeats() int {
 	item := 0
 	
 	// inspect each ball and its order on the queue
-	for i := 0; i < len(c.gcdIndex); i++ {
+	for i := 0; i < len(c.index); i++ {
 		// inspect the newest ball in the queue
 		item = <- c.queue
 		
-		if item == i + 1 && c.gcdIndex[i] == 0 {
+		if item == i + 1 && c.index[i] == 0 {
 			found++
 			// set the cycle the repeat was logged
-			c.gcdIndex[i] = c.cycles
+			c.index[i] = c.cycles
 		}
 		
 		// return the ball to the end of the queue
